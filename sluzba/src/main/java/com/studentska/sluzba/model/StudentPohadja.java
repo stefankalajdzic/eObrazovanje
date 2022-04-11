@@ -21,10 +21,12 @@ public class StudentPohadja implements Serializable {
 
 	//bi-directional many-to-one association to Semestar
 	@ManyToOne
+	@JoinColumn(insertable=false, updatable=false)
 	private Semestar semestar;
 
 	//bi-directional many-to-one association to Student
 	@ManyToOne
+	@JoinColumn(insertable=false, updatable=false)
 	private Student student;
 
 	public StudentPohadja() {
