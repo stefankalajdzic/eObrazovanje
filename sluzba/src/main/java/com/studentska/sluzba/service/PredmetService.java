@@ -21,7 +21,7 @@ public interface PredmetService {
 
     List<ObavestenjeDTORes> pregledRasporeda(String token);
 
-    List<PredmetDTORes> sviPredmeti(String token);
+    List<PredmetDTORes> sviPredmeti();
 
     DetaljiPredmetaDTORes detaljiPredmeta(String token, int id);
 

@@ -58,8 +58,8 @@ public class PredmetServiceImpl implements PredmetService {
         if (!validneUloge.contains(req.getUloga())) {
             throw new Exception("Nevalidna uloga");
         }
-        Predmet predmet = predmetRepository.getById(req.getIdPredavac());
-        Predavac predavac = predavacRepository.getById(req.getIdProfesor());
+        Predmet predmet = predmetRepository.getById(req.getIdPredmet());
+        Predavac predavac = predavacRepository.getById(req.getIdPredavac());
 
         PredavacPredmet predavacPredmet = predavacPredmetRepository.findOneByPredmetAndUloga(predmet, req.getUloga());
         if (predavacPredmet == null) {
@@ -194,7 +194,7 @@ public class PredmetServiceImpl implements PredmetService {
     }
 
     @Override
-    public List<PredmetDTORes> sviPredmeti(String token) {
+    public List<PredmetDTORes> sviPredmeti() {
         List<PredmetDTORes> res = new ArrayList<>();
         List<Predmet> sviPredmeti = predmetRepository.findAll();
         for (Predmet p : sviPredmeti) {
