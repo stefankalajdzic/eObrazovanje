@@ -5,7 +5,6 @@ import java.util.Date;
 public class EvidencijaUplataDTOReq {
     private double iznos;
     private String svrha;
-    private String vremeUplate;
     private int idStudent;
 
     public double getIznos() {
@@ -22,14 +21,6 @@ public class EvidencijaUplataDTOReq {
 
     public void setSvrha(String svrha) {
         this.svrha = svrha;
-    }
-
-    public String getVremeUplate() {
-        return vremeUplate;
-    }
-
-    public void setVremeUplate(String vremeUplate) {
-        this.vremeUplate = vremeUplate;
     }
 
     public int getIdStudent() {

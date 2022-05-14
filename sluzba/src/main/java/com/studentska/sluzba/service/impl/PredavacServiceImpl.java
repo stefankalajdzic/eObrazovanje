@@ -11,6 +11,7 @@ import com.studentska.sluzba.service.PredavacService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -101,15 +102,13 @@ public class PredavacServiceImpl implements PredavacService {
     }
 
     @Override
+    @Transactional
     public void dodajTermin(String token, DodajTerminPolaganjaDTOReq req) {
         PravilaPolaganjaPK pk = new PravilaPolaganjaPK();
         pk.setPredmetId(req.getPredmetId());
         pk.setTipPolaganjaId(req.getTipPolaganjaId());
-        PravilaPolaganja pravilaPolaganja = pravilaPolaganjaRepository.getById(pk);
-        if(pravilaPolaganja == null){
-            pravilaPolaganja = new PravilaPolaganja();
-            pravilaPolaganja.setId(pk);
-        }
+        PravilaPolaganja pravilaPolaganja = new PravilaPolaganja();;
+        pravilaPolaganja.setId(pk);
         pravilaPolaganjaRepository.saveAndFlush(pravilaPolaganja);
 
         TerminPolaganja tp = new TerminPolaganja();

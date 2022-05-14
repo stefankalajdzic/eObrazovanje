@@ -5,7 +5,9 @@ import com.studentska.sluzba.dto.NovEmailDTOReq;
 import com.studentska.sluzba.dto.NovaLozinkaDTOReq;
 import com.studentska.sluzba.dto.predavac.*;
 import com.studentska.sluzba.dto.student.DetaljiPredmetaDTORes;
+import com.studentska.sluzba.dto.student.IstorijatPolaganjaIspitaDTORes;
 import com.studentska.sluzba.service.PredavacService;
+import com.studentska.sluzba.service.PredmetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,9 @@ public class PredavacController {
 
     @Autowired
     PredavacService predavacService;
+
+    @Autowired
+    PredmetService predmetService;
 
     @PostMapping("/novEmail")
     @PreAuthorize("hasAuthority('PREDAVAC')")
@@ -123,6 +128,19 @@ public class PredavacController {
         List<PrijavaDTORes> response = null;
         try {
             response = predavacService.prijaveZaTermin(token, id);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/istorijaPrijavaStudenta")
+    @PreAuthorize("hasAuthority('PREDAVAC')")
+    public ResponseEntity<?> istorijaPrijavaStudenta(@RequestParam int idStudenta, @RequestParam int idPredmeta) {
+        List<IstorijatPolaganjaIspitaDTORes> response = null;
+        try {
+            response = predmetService.istorijaPrijavaStudenta(idStudenta, idPredmeta);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
