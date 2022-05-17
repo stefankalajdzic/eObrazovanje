@@ -3,20 +3,16 @@ package com.studentska.sluzba.dto.administrator;
 import java.util.List;
 
 public class PostaviUloguNaPredmetDTOReq {
-    private int idProfesor;
+    private int idPredmet;
     private int idPredavac;
     private String uloga;
 
-
-
-    private List<Integer> tipoviPolaganja;
-
-    public int getIdProfesor() {
-        return idProfesor;
+    public int getIdPredmet() {
+        return idPredmet;
     }
 
-    public void setIdProfesor(int idProfesor) {
-        this.idProfesor = idProfesor;
+    public void setIdPredmet(int idPredmet) {
+        this.idPredmet = idPredmet;
     }
 
     public int getIdPredavac() {
@@ -35,13 +31,7 @@ public class PostaviUloguNaPredmetDTOReq {
         this.uloga = uloga;
     }
 
-    public List<Integer> getTipoviPolaganja() {
-        return tipoviPolaganja;
-    }
 
-    public void setTipoviPolaganja(List<Integer> tipoviPolaganja) {
-        this.tipoviPolaganja = tipoviPolaganja;
-    }
 
 
 }
