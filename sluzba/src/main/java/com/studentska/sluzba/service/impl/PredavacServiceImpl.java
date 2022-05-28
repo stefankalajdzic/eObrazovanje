@@ -26,7 +26,7 @@ public class PredavacServiceImpl implements PredavacService {
     PredmetRepository predmetRepository;
 
     @Autowired
-    ObavestenjeRepository  obavestenjeRepository;
+    ObavestenjeRepository obavestenjeRepository;
 
     @Autowired
     SlusaPredmetRepository slusaPredmetRepository;
@@ -39,6 +39,12 @@ public class PredavacServiceImpl implements PredavacService {
 
     @Autowired
     TerminPolaganjaRepository terminPolaganjaRepository;
+
+    @Autowired
+    TipPolaganjaRepository tipPolaganjaRepository;
+
+    @Autowired
+    PredavacPredmetRepository predavacPredmetRepository;
 
     @Autowired
     SecurityConfiguration configuration;
@@ -107,7 +113,8 @@ public class PredavacServiceImpl implements PredavacService {
         PravilaPolaganjaPK pk = new PravilaPolaganjaPK();
         pk.setPredmetId(req.getPredmetId());
         pk.setTipPolaganjaId(req.getTipPolaganjaId());
-        PravilaPolaganja pravilaPolaganja = new PravilaPolaganja();;
+        PravilaPolaganja pravilaPolaganja = new PravilaPolaganja();
+        ;
         pravilaPolaganja.setId(pk);
         pravilaPolaganjaRepository.saveAndFlush(pravilaPolaganja);
 
@@ -122,7 +129,7 @@ public class PredavacServiceImpl implements PredavacService {
     public List<PrijavaDTORes> prijaveZaTermin(String token, int id) {
         List<PrijavaDTORes> res = new ArrayList<>();
         TerminPolaganja tp = terminPolaganjaRepository.getById(id);
-        for(Polaganje p:tp.getPolaganjes()){
+        for (Polaganje p : tp.getPolaganjes()) {
             PrijavaDTORes tmp = new PrijavaDTORes();
             tmp.setIdPredmet(p.getSlusaPredmet().getPredmet().getId());
             tmp.setFinalnaOcena(p.getSlusaPredmet().getOcena());
@@ -133,6 +140,110 @@ public class PredavacServiceImpl implements PredavacService {
             tmp.setNazivPredmeta(p.getSlusaPredmet().getPredmet().getNaziv());
             tmp.setPrezimeStudenta(p.getSlusaPredmet().getStudent().getPrezime());
             tmp.setOstvarenBrojBodova(p.getOstvarenBrojBodova());
+            res.add(tmp);
+        }
+        return res;
+    }
+
+    @Override
+    public ProfileDtoRes getProfile(String token) {
+        String username = tokenUtils.getUsernameFromToken(token.split("\\s")[1]);
+        Predavac predavac = predavacRepository.findOneByEmail(username);
+        ProfileDtoRes res = new ProfileDtoRes();
+        res.setIme(predavac.getIme());
+        res.setPrezime(predavac.getPrezime());
+        return res;
+    }
+
+    @Override
+    public List<TipPolaganjaDtoRes> tipoviPolaganjaZaPredmet(String token, int idPredmeta) {
+        List<PravilaPolaganja> pravila = pravilaPolaganjaRepository.findAllByIdPredmetId(idPredmeta);
+        List<TipPolaganjaDtoRes> res = new ArrayList<>();
+        for (PravilaPolaganja p : pravila) {
+            TipPolaganja tp = tipPolaganjaRepository.getById(p.getId().getTipPolaganjaId());
+            TipPolaganjaDtoRes tmp = new TipPolaganjaDtoRes();
+            tmp.setId(tp.getId());
+            tmp.setMinimumZaProlaz(tp.getMinimalnoZaProlaz());
+            tmp.setNaziv(tp.getNaziv());
+            tmp.setUkupno(tp.getUkupno());
+            tmp.setMinimumZaUslov(tp.getMinimalnoZaUslov());
+            res.add(tmp);
+        }
+        return res;
+    }
+
+    @Override
+    public List<SlusaPredmetDtoRes> dobaviSlusanja(String token, int potpis) {
+        String username = tokenUtils.getUsernameFromToken(token.split("\\s")[1]);
+        Predavac predavac = predavacRepository.findOneByEmail(username);
+        List<PredavacPredmet> predavacPredmets = predavacPredmetRepository.findAllByPredavac(predavac);
+        List<SlusaPredmetDtoRes> res = new ArrayList<>();
+        for (PredavacPredmet pp : predavacPredmets) {
+            List<SlusaPredmet> slusaPredmetList = slusaPredmetRepository.findAllByPredmet(pp.getPredmet());
+            for (SlusaPredmet sp : slusaPredmetList) {
+                if ((int) sp.getElektronskiPotpis() == potpis) {
+                    SlusaPredmetDtoRes tmp = new SlusaPredmetDtoRes();
+                    tmp.setId(sp.getId());
+                    tmp.setImeStudent(sp.getStudent().getIme());
+                    tmp.setIdStudent(sp.getStudent().getId());
+                    tmp.setPrezimeStudent(sp.getStudent().getPrezime());
+                    tmp.setElektronskiPotpis(sp.getElektronskiPotpis());
+                    tmp.setIndexStudent(sp.getStudent().getBrojIndexa());
+                    tmp.setOcena(sp.getOcena());
+                    tmp.setNazivPredmet(sp.getPredmet().getNaziv());
+                    tmp.setIdPredmet(sp.getPredmet().getId());
+                    res.add(tmp);
+                }
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public List<TerminPolaganjaDtoRes> dobaviTermine(String token) {
+        String username = tokenUtils.getUsernameFromToken(token.split("\\s")[1]);
+        Predavac predavac = predavacRepository.findOneByEmail(username);
+        List<PredavacPredmet> predavacPredmets = predavacPredmetRepository.findAllByPredavac(predavac);
+        List<TerminPolaganjaDtoRes> res = new ArrayList<>();
+        for (PredavacPredmet pp : predavacPredmets) {
+            List<TerminPolaganja> termini = terminPolaganjaRepository.findAllByPravilaPolaganjaIdPredmetId(pp.getPredmet().getId());
+            for (TerminPolaganja t : termini) {
+                TerminPolaganjaDtoRes tmp = new TerminPolaganjaDtoRes();
+                tmp.setId(t.getId());
+                tmp.setPredmet(pp.getPredmet().getNaziv());
+                tmp.setNazivRoka(t.getNazivRoka());
+                tmp.setNapomena(t.getNapomena());
+                res.add(tmp);
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public List<PolaganjeDtoRes> dobaviPolaganjaZaTermin(String token, int idTermina) {
+        TerminPolaganja terminPolaganja = terminPolaganjaRepository.getById(idTermina);
+
+        List<PolaganjeDtoRes> res = new ArrayList<>();
+        List<Polaganje> polaganjaZaTermin = polaganjeRepository.findAllByTerminPolaganjaOrderByIdDesc(terminPolaganja);
+        for (Polaganje polaganje : polaganjaZaTermin) {
+            PolaganjeDtoRes tmp = new PolaganjeDtoRes();
+            tmp.setId(polaganje.getId());
+            tmp.setOstvarenBrojBodova(polaganje.getOstvarenBrojBodova());
+            tmp.setVremePrijave(polaganje.getVremePrijave().toString());
+            SlusaPredmet sp = polaganje.getSlusaPredmet();
+
+            SlusaPredmetDtoRes tmpSp = new SlusaPredmetDtoRes();
+            tmpSp.setId(sp.getId());
+            tmpSp.setImeStudent(sp.getStudent().getIme());
+            tmpSp.setIdStudent(sp.getStudent().getId());
+            tmpSp.setPrezimeStudent(sp.getStudent().getPrezime());
+            tmpSp.setElektronskiPotpis(sp.getElektronskiPotpis());
+            tmpSp.setIndexStudent(sp.getStudent().getBrojIndexa());
+            tmpSp.setOcena(sp.getOcena());
+            tmpSp.setNazivPredmet(sp.getPredmet().getNaziv());
+            tmpSp.setIdPredmet(sp.getPredmet().getId());
+            tmp.setSlusaPredmetDtoRes(tmpSp);
+
             res.add(tmp);
         }
         return res;

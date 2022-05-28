@@ -4,6 +4,7 @@ import com.studentska.sluzba.dto.ErrorDto;
 import com.studentska.sluzba.dto.NovEmailDTOReq;
 import com.studentska.sluzba.dto.NovaLozinkaDTOReq;
 import com.studentska.sluzba.dto.administrator.EvidencijaUplataDTORes;
+import com.studentska.sluzba.dto.predavac.ProfileDtoRes;
 import com.studentska.sluzba.dto.student.*;
 import com.studentska.sluzba.service.PredmetService;
 import com.studentska.sluzba.service.StudentService;
@@ -149,6 +150,19 @@ public class StudentController {
         try {
             studentService.uverenjeOStudiranju(token);
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getProfile")
+    @PreAuthorize("hasAuthority('STUDENT')")
+    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String token) {
+        ProfileDtoRes response = null;
+        try {
+            response = studentService.getProfile(token);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);

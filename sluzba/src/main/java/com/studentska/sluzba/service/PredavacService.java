@@ -24,4 +24,14 @@ public interface PredavacService {
     void dodajTermin(String token, DodajTerminPolaganjaDTOReq req);
 
     List<PrijavaDTORes> prijaveZaTermin(String token, int id);
+
+    ProfileDtoRes getProfile(String token);
+
+    List<TipPolaganjaDtoRes> tipoviPolaganjaZaPredmet(String token, int idPredmeta);
+
+    List<SlusaPredmetDtoRes> dobaviSlusanja(String token, int potpis);
+
+    List<TerminPolaganjaDtoRes> dobaviTermine(String token);
+
+    List<PolaganjeDtoRes> dobaviPolaganjaZaTermin(String token, int idTermina);
 }

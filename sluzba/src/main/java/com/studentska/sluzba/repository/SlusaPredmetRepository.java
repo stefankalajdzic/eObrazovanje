@@ -14,4 +14,6 @@ public interface SlusaPredmetRepository extends JpaRepository<SlusaPredmet, Inte
     SlusaPredmet findOneByStudentAndPredmet(Student student, Predmet predmet);
 
     List<SlusaPredmet> findAllByStudent(Student student);
+
+    List<SlusaPredmet> findAllByPredmet(Predmet predmet);
 }

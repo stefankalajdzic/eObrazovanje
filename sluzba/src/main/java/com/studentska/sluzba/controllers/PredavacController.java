@@ -147,4 +147,70 @@ public class PredavacController {
             return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/getProfile")
+    @PreAuthorize("hasAuthority('PREDAVAC')")
+    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String token) {
+        ProfileDtoRes response = null;
+        try {
+            response = predavacService.getProfile(token);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/tipoviPolaganjaZaPredmet")
+    @PreAuthorize("hasAuthority('PREDAVAC')")
+    public ResponseEntity<?> tipoviPolaganjaZaPredmet(@RequestHeader("Authorization") String token, @RequestParam int idPredmeta) {
+        List<TipPolaganjaDtoRes> response = null;
+        try {
+            response = predavacService.tipoviPolaganjaZaPredmet(token, idPredmeta);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @GetMapping("/dobaviSlusanja")
+    @PreAuthorize("hasAuthority('PREDAVAC')")
+    public ResponseEntity<?> dobaviSlusanja(@RequestHeader("Authorization") String token, @RequestParam int potpis) {
+        List<SlusaPredmetDtoRes> response = null;
+        try {
+            response = predavacService.dobaviSlusanja(token, potpis);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/dobaviTermine")
+    @PreAuthorize("hasAuthority('PREDAVAC')")
+    public ResponseEntity<?> dobaviTermine(@RequestHeader("Authorization") String token) {
+        List<TerminPolaganjaDtoRes> response = null;
+        try {
+            response = predavacService.dobaviTermine(token);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/dobaviPolaganjaZaTermin")
+    @PreAuthorize("hasAuthority('PREDAVAC')")
+    public ResponseEntity<?> dobaviPolaganjaZaTermin(@RequestHeader("Authorization") String token, @RequestParam int idTermina) {
+        List<PolaganjeDtoRes> response = null;
+        try {
+            response = predavacService.dobaviPolaganjaZaTermin(token, idTermina);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

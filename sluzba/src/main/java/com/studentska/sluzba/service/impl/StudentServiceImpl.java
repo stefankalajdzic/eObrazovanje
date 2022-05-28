@@ -1,5 +1,6 @@
 package com.studentska.sluzba.service.impl;
 
+import com.studentska.sluzba.dto.predavac.ProfileDtoRes;
 import com.studentska.sluzba.dto.student.AzuriranjeProfilaDTOReq;
 import com.studentska.sluzba.dto.NovEmailDTOReq;
 import com.studentska.sluzba.dto.NovaLozinkaDTOReq;
@@ -75,6 +76,17 @@ public class StudentServiceImpl implements StudentService {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public ProfileDtoRes getProfile(String token) {
+        String username = tokenUtils.getUsernameFromToken(token.split("\\s")[1]);
+        Student student = studentRepository.findOneByEmail(username);
+        ProfileDtoRes res = new ProfileDtoRes();
+        res.setPrezime(student.getPrezime());
+        res.setIme(student.getIme());
+        res.setBrojIndeksa(student.getBrojIndexa());
+        return res;
     }
 
 
